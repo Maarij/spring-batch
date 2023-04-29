@@ -56,10 +56,17 @@ public class StudentChunkJobConfig {
     @StepScope
     public FlatFileItemReader<StudentCsvRequestDto> flatFileItemReader(
             @Value("#{jobParameters['inputFile']}") FileSystemResource fileSystemResource) {
+
         FlatFileItemReader<StudentCsvRequestDto> flatFileItemReader = new FlatFileItemReader<>();
 
         flatFileItemReader.setResource(fileSystemResource);
+        flatFileItemReader.setLineMapper(createStudentLineMapper());
+        flatFileItemReader.setLinesToSkip(1);
 
+        return flatFileItemReader;
+    }
+
+    private DefaultLineMapper<StudentCsvRequestDto> createStudentLineMapper() {
         DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
         tokenizer.setNames("ID", "First Name", "Last Name", "Email");
 
@@ -69,10 +76,6 @@ public class StudentChunkJobConfig {
         DefaultLineMapper<StudentCsvRequestDto> lineMapper = new DefaultLineMapper<>();
         lineMapper.setLineTokenizer(tokenizer);
         lineMapper.setFieldSetMapper(fieldMapper);
-
-        flatFileItemReader.setLineMapper(lineMapper);
-        flatFileItemReader.setLinesToSkip(1);
-
-        return flatFileItemReader;
+        return lineMapper;
     }
 }

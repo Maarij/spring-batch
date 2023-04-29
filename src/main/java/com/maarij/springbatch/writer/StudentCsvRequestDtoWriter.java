@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 public class StudentCsvRequestDtoWriter implements ItemWriter<StudentCsvRequestDto> {
 
     @Override
-    public void write(Chunk<? extends StudentCsvRequestDto> chunk) throws Exception {
+    public void write(Chunk<? extends StudentCsvRequestDto> chunk) {
         System.out.println("Inside Item Writer");
         chunk.getItems().forEach(System.out::println);
     }
