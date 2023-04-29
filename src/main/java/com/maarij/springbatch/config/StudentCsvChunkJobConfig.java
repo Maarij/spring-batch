@@ -1,8 +1,6 @@
 package com.maarij.springbatch.config;
 
 import com.maarij.springbatch.model.StudentCsvRequestDto;
-import com.maarij.springbatch.processor.FirstItemProcessor;
-import com.maarij.springbatch.reader.FirstItemReader;
 import com.maarij.springbatch.writer.StudentCsvRequestDtoWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -22,23 +20,17 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
-public class StudentChunkJobConfig {
+public class StudentCsvChunkJobConfig {
 
-    private final FirstItemReader firstItemReader;
-    private final FirstItemProcessor firstItemProcessor;
     private final StudentCsvRequestDtoWriter studentCsvRequestDtoWriter;
 
-    public StudentChunkJobConfig(FirstItemReader firstItemReader,
-                                 FirstItemProcessor firstItemProcessor,
-                                 StudentCsvRequestDtoWriter studentCsvRequestDtoWriter) {
-        this.firstItemReader = firstItemReader;
-        this.firstItemProcessor = firstItemProcessor;
+    public StudentCsvChunkJobConfig(StudentCsvRequestDtoWriter studentCsvRequestDtoWriter) {
         this.studentCsvRequestDtoWriter = studentCsvRequestDtoWriter;
     }
 
     @Bean
-    public Job studentChunkJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        return new JobBuilder("studentChunkJob", jobRepository)
+    public Job studentCsvChunkJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new JobBuilder("studentCsvChunkJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .start(firstChunkStep(jobRepository, transactionManager))
                 .build();

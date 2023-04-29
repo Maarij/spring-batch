@@ -18,13 +18,19 @@ public class JobService {
 
     private final Job taskletJob;
     private final Job chunkJob;
-    private final Job studentChunkJob;
+    private final Job studentCsvChunkJob;
+    private final Job studentJsonChunkJob;
 
-    public JobService(JobLauncher jobLauncher, Job taskletJob, Job chunkJob, Job studentChunkJob) {
+    public JobService(JobLauncher jobLauncher,
+                      Job taskletJob,
+                      Job chunkJob,
+                      Job studentCsvChunkJob,
+                      Job studentJsonChunkJob) {
         this.jobLauncher = jobLauncher;
         this.taskletJob = taskletJob;
         this.chunkJob = chunkJob;
-        this.studentChunkJob = studentChunkJob;
+        this.studentCsvChunkJob = studentCsvChunkJob;
+        this.studentJsonChunkJob = studentJsonChunkJob;
     }
 
     @Async
@@ -38,10 +44,11 @@ public class JobService {
             JobExecution jobExecution;
 
             switch (jobName) {
-                case "taskletJob"       -> jobExecution = jobLauncher.run(taskletJob, jobParameters);
-                case "chunkJob"         -> jobExecution = jobLauncher.run(chunkJob, jobParameters);
-//                case "studentChunkJob"  -> jobExecution = jobLauncher.run(studentChunkJob, jobParameters);
-                default                 -> throw new IllegalArgumentException("Invalid job name");
+                case "taskletJob"           -> jobExecution = jobLauncher.run(taskletJob, jobParameters);
+                case "chunkJob"             -> jobExecution = jobLauncher.run(chunkJob, jobParameters);
+                case "studentCsvChunkJob"   -> jobExecution = jobLauncher.run(studentCsvChunkJob, jobParameters);
+                case "studentJsonChunkJob"  -> jobExecution = jobLauncher.run(studentJsonChunkJob, jobParameters);
+                default                     -> throw new IllegalArgumentException("Invalid job name");
             }
 
             System.out.println("jobExecution = " + jobExecution.getId());
