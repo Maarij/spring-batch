@@ -18,16 +18,16 @@ public class JobService {
 
     private final JobLauncher jobLauncher;
 
-    @Qualifier("firstJob")
-    private final Job firstJob;
+    @Qualifier("taskletJob")
+    private final Job taskletJob;
 
-    @Qualifier("secondJob")
-    private final Job secondJob;
+    @Qualifier("chunkJob")
+    private final Job chunkJob;
 
-    public JobService(JobLauncher jobLauncher, Job firstJob, Job secondJob) {
+    public JobService(JobLauncher jobLauncher, Job taskletJob, Job chunkJob) {
         this.jobLauncher = jobLauncher;
-        this.firstJob = firstJob;
-        this.secondJob = secondJob;
+        this.taskletJob = taskletJob;
+        this.chunkJob = chunkJob;
     }
 
     @Async
@@ -40,10 +40,10 @@ public class JobService {
         try {
             JobExecution jobExecution = null;
 
-            if (StringUtils.equals("firstJob", jobName)) {
-                jobExecution = jobLauncher.run(firstJob, jobParameters);
-            } else if (StringUtils.equals("secondJob", jobName)) {
-                jobExecution = jobLauncher.run(secondJob, jobParameters);
+            if (StringUtils.equals("taskletJob", jobName)) {
+                jobExecution = jobLauncher.run(taskletJob, jobParameters);
+            } else if (StringUtils.equals("chunkJob", jobName)) {
+                jobExecution = jobLauncher.run(chunkJob, jobParameters);
             }
 
             System.out.println("jobExecution = " + jobExecution.getId());

@@ -4,7 +4,7 @@ import com.maarij.springbatch.listener.FirstJobListener;
 import com.maarij.springbatch.listener.FirstStepListener;
 import com.maarij.springbatch.processor.FirstItemProcessor;
 import com.maarij.springbatch.reader.FirstItemReader;
-import com.maarij.springbatch.service.SecondTasklet;
+import com.maarij.springbatch.service.tasklet.SecondTasklet;
 import com.maarij.springbatch.writer.FirstItemWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -44,8 +44,8 @@ public class SampleJob {
     }
 
     @Bean
-    public Job firstJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        return new JobBuilder("firstJob", jobRepository)
+    public Job taskletJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new JobBuilder("taskletJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .start(firstStep(jobRepository, transactionManager))
                 .next(secondStep(jobRepository, transactionManager))
@@ -67,11 +67,10 @@ public class SampleJob {
     }
 
     @Bean
-    public Job secondJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
-        return new JobBuilder("secondJob", jobRepository)
+    public Job chunkJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        return new JobBuilder("chunkJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .start(firstChunkStep(jobRepository, transactionManager))
-//                .next(secondStep(jobRepository, transactionManager))
                 .build();
     }
 

@@ -1,4 +1,4 @@
-package com.maarij.springbatch.service;
+package com.maarij.springbatch.service.scheduler;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -12,16 +12,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class SecondJobScheduler {
+public class JobScheduler {
 
     private final JobLauncher jobLauncher;
 
-    @Qualifier("secondJob")
-    private final Job secondJob;
+    @Qualifier("chunkJob")
+    private final Job chunkJob;
 
-    public SecondJobScheduler(JobLauncher jobLauncher, Job secondJob) {
+    public JobScheduler(JobLauncher jobLauncher, Job chunkJob) {
         this.jobLauncher = jobLauncher;
-        this.secondJob = secondJob;
+        this.chunkJob = chunkJob;
     }
 
 //    @Scheduled(cron = "0 0/1 * 1/1 * ?")
@@ -32,7 +32,7 @@ public class SecondJobScheduler {
         JobParameters jobParameters = new JobParameters(params);
 
         try {
-            JobExecution jobExecution = jobLauncher.run(secondJob, jobParameters);
+            JobExecution jobExecution = jobLauncher.run(chunkJob, jobParameters);
 
             System.out.println("jobExecution = " + jobExecution);
         } catch (Exception ex) {
