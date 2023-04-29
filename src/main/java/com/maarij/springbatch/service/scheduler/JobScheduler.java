@@ -16,7 +16,7 @@ public class JobScheduler {
 
     private final JobLauncher jobLauncher;
 
-    @Qualifier("chunkJob")
+    @Qualifier("chunkJobConfig")
     private final Job chunkJob;
 
     public JobScheduler(JobLauncher jobLauncher, Job chunkJob) {

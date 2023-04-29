@@ -18,10 +18,10 @@ public class JobService {
 
     private final JobLauncher jobLauncher;
 
-    @Qualifier("taskletJob")
+    @Qualifier("taskletJobConfig")
     private final Job taskletJob;
 
-    @Qualifier("chunkJob")
+    @Qualifier("chunkJobConfig")
     private final Job chunkJob;
 
     public JobService(JobLauncher jobLauncher, Job taskletJob, Job chunkJob) {
