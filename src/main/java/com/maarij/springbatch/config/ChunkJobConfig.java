@@ -28,7 +28,6 @@ public class ChunkJobConfig {
         this.firstItemWriter = firstItemWriter;
     }
 
-
     @Bean
     public Job chunkJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new JobBuilder("chunkJob", jobRepository)

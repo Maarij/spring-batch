@@ -32,7 +32,6 @@ public class TaskletJobConfig {
         this.firstStepListener = firstStepListener;
     }
 
-
     @Bean
     public Job taskletJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
         return new JobBuilder("taskletJob", jobRepository)
@@ -55,5 +54,4 @@ public class TaskletJobConfig {
                 .tasklet(secondTasklet, transactionManager)
                 .build();
     }
-
 }
