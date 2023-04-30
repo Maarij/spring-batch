@@ -23,6 +23,13 @@ public class StudentJdbcChunkJobConfig {
     private final DataSource dataSource;
     private final StudentJdbcRequestDtoWriter studentJdbcRequestDtoWriter;
 
+    // Will need to set spring.datasource.jdbc-url
+//    @Bean
+//    @ConfigurationProperties(prefix = "spring.otherdatasource")
+//    public DataSource otherdataSource() {
+//        return DataSourceBuilder.create().build();
+//    }
+
     public StudentJdbcChunkJobConfig(DataSource dataSource, StudentJdbcRequestDtoWriter studentJdbcRequestDtoWriter) {
         this.dataSource = dataSource;
         this.studentJdbcRequestDtoWriter = studentJdbcRequestDtoWriter;
