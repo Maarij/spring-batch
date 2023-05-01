@@ -10,14 +10,19 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
+import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
+import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.util.Date;
 
 @Configuration
 public class StudentCsvChunkJobConfig {
@@ -40,7 +45,8 @@ public class StudentCsvChunkJobConfig {
         return new StepBuilder("First Chunk Step", jobRepository)
                 .<StudentCsvRequestDto, StudentCsvRequestDto>chunk(3, transactionManager)
                 .reader(flatFileItemReader(null))
-                .writer(studentCsvRequestDtoWriter)
+//                .writer(studentCsvRequestDtoWriter)
+                .writer(flatFileItemWriter(null))
                 .build();
     }
 
@@ -69,5 +75,27 @@ public class StudentCsvChunkJobConfig {
         lineMapper.setLineTokenizer(tokenizer);
         lineMapper.setFieldSetMapper(fieldMapper);
         return lineMapper;
+    }
+
+    @Bean
+    @StepScope
+    public FlatFileItemWriter<StudentCsvRequestDto> flatFileItemWriter(
+            @Value("#{jobParameters['outputFile']}") FileSystemResource fileSystemResource) {
+
+        FlatFileItemWriter<StudentCsvRequestDto> flatFileItemWriter = new FlatFileItemWriter<>();
+        flatFileItemWriter.setResource(fileSystemResource);
+
+        flatFileItemWriter.setHeaderCallback(writer -> writer.write("Id,First Name,Last Name,Email"));
+
+        BeanWrapperFieldExtractor<StudentCsvRequestDto> fieldExtractor = new BeanWrapperFieldExtractor<>();
+        fieldExtractor.setNames(new String[] {"id", "firstName", "lastName", "email"});
+
+        DelimitedLineAggregator<StudentCsvRequestDto> lineAggregator = new DelimitedLineAggregator<>();
+        lineAggregator.setFieldExtractor(fieldExtractor);
+        flatFileItemWriter.setLineAggregator(lineAggregator);
+
+        flatFileItemWriter.setFooterCallback(writer -> writer.write("Created at " + new Date()));
+
+        return flatFileItemWriter;
     }
 }

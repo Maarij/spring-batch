@@ -37,6 +37,7 @@ To perform a REST call, use the following endpoint to start the appropriate job:
 To run by command line arguments, pass the appropriate input file parameter and update the application properties 
 to the desired job. Note for jdbc configurations, you will have to set up the appropriate data in Microsoft SQL Server.
 
-    inputFile=C:\Git\spring-batch\InputFiles\students.json
+    inputFile=C:\Git\spring-batch\InputFiles\students.csv
+    inputFile=C:\Git\spring-batch\OutputFiles\students.csv
 
     spring.batch.job.name=chunkJob

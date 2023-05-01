@@ -9,7 +9,9 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.json.JacksonJsonObjectMarshaller;
 import org.springframework.batch.item.json.JacksonJsonObjectReader;
+import org.springframework.batch.item.json.JsonFileItemWriter;
 import org.springframework.batch.item.json.JsonItemReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -38,7 +40,8 @@ public class StudentJsonChunkJobConfig {
         return new StepBuilder("First Chunk Step", jobRepository)
                 .<StudentJsonRequestDto, StudentJsonRequestDto>chunk(3, transactionManager)
                 .reader(jsonItemReader(null))
-                .writer(studentJsonRequestDtoWriter)
+//                .writer(studentJsonRequestDtoWriter)
+                .writer(jsonItemWriter(null))
                 .build();
     }
 
@@ -53,5 +56,13 @@ public class StudentJsonChunkJobConfig {
         jsonItemReader.setJsonObjectReader(new JacksonJsonObjectReader<>(StudentJsonRequestDto.class));
 
         return jsonItemReader;
+    }
+
+    @Bean
+    @StepScope
+    public JsonFileItemWriter<StudentJsonRequestDto> jsonItemWriter(
+            @Value("#{jobParameters['outputFile']}") FileSystemResource fileSystemResource) {
+
+        return new JsonFileItemWriter<>(fileSystemResource, new JacksonJsonObjectMarshaller<>());
     }
 }
