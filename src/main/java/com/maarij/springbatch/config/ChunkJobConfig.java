@@ -33,6 +33,7 @@ public class ChunkJobConfig {
         return new JobBuilder("chunkJob", jobRepository)
                 .incrementer(new RunIdIncrementer())
                 .start(firstChunkStep(jobRepository, transactionManager))
+//                .next(secondChunkStep(jobRepository, transactionManager))
                 .build();
     }
 
