@@ -10,6 +10,7 @@ import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.xml.StaxEventItemReader;
+import org.springframework.batch.item.xml.StaxEventItemWriter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +39,8 @@ public class StudentXmlChunkJobConfig {
         return new StepBuilder("First Chunk Step", jobRepository)
                 .<StudentXmlRequestDto, StudentXmlRequestDto>chunk(3, transactionManager)
                 .reader(staxEventItemReader(null))
-                .writer(studentXmlRequestDtoWriter)
+//                .writer(studentXmlRequestDtoWriter)
+                .writer(staxEventItemWriter(null))
                 .build();
     }
 
@@ -58,5 +60,20 @@ public class StudentXmlChunkJobConfig {
 
 
         return staxEventItemReader;
+    }
+
+    public StaxEventItemWriter<StudentXmlRequestDto> staxEventItemWriter(
+            @Value("#{jobParameters['outputFile']}") FileSystemResource fileSystemResource) {
+        StaxEventItemWriter<StudentXmlRequestDto> staxEventItemWriter = new StaxEventItemWriter<>();
+
+        staxEventItemWriter.setResource(fileSystemResource);
+        staxEventItemWriter.setRootTagName("students");
+
+        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+        marshaller.setClassesToBeBound(StudentXmlRequestDto.class);
+        staxEventItemWriter.setMarshaller(marshaller);
+
+
+        return staxEventItemWriter;
     }
 }
