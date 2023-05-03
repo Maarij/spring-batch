@@ -1,6 +1,7 @@
 package com.maarij.springbatch.config;
 
 import com.maarij.springbatch.model.StudentCsvRequestDto;
+import com.maarij.springbatch.processor.StudentCsvItemProcessor;
 import com.maarij.springbatch.writer.StudentCsvRequestDtoWriter;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -9,8 +10,10 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.step.skip.AlwaysSkipItemSkipPolicy;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
+import org.springframework.batch.item.file.FlatFileParseException;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
@@ -28,9 +31,12 @@ import java.util.Date;
 public class StudentCsvChunkJobConfig {
 
     private final StudentCsvRequestDtoWriter studentCsvRequestDtoWriter;
+    private final StudentCsvItemProcessor studentCsvItemProcessor;
 
-    public StudentCsvChunkJobConfig(StudentCsvRequestDtoWriter studentCsvRequestDtoWriter) {
+    public StudentCsvChunkJobConfig(StudentCsvRequestDtoWriter studentCsvRequestDtoWriter,
+                                    StudentCsvItemProcessor studentCsvItemProcessor) {
         this.studentCsvRequestDtoWriter = studentCsvRequestDtoWriter;
+        this.studentCsvItemProcessor = studentCsvItemProcessor;
     }
 
     @Bean
@@ -45,8 +51,13 @@ public class StudentCsvChunkJobConfig {
         return new StepBuilder("First Chunk Step", jobRepository)
                 .<StudentCsvRequestDto, StudentCsvRequestDto>chunk(3, transactionManager)
                 .reader(flatFileItemReader(null))
+                .processor(studentCsvItemProcessor)
 //                .writer(studentCsvRequestDtoWriter)
                 .writer(flatFileItemWriter(null))
+                .faultTolerant()
+                .skip(FlatFileParseException.class)
+//                .skipLimit(Integer.MAX_VALUE)
+                .skipPolicy(new AlwaysSkipItemSkipPolicy())
                 .build();
     }
 
