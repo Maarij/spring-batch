@@ -62,6 +62,8 @@ public class StudentXmlChunkJobConfig {
         return staxEventItemReader;
     }
 
+    @Bean
+    @StepScope
     public StaxEventItemWriter<StudentXmlRequestDto> staxEventItemWriter(
             @Value("#{jobParameters['outputFile']}") FileSystemResource fileSystemResource) {
         StaxEventItemWriter<StudentXmlRequestDto> staxEventItemWriter = new StaxEventItemWriter<>();
