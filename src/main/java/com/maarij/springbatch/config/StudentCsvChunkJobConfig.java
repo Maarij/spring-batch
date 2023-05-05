@@ -1,5 +1,6 @@
 package com.maarij.springbatch.config;
 
+import com.maarij.springbatch.listener.SkipListener;
 import com.maarij.springbatch.model.StudentCsvRequestDto;
 import com.maarij.springbatch.processor.StudentCsvItemProcessor;
 import com.maarij.springbatch.writer.StudentCsvRequestDtoWriter;
@@ -13,7 +14,6 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.skip.AlwaysSkipItemSkipPolicy;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
-import org.springframework.batch.item.file.FlatFileParseException;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
@@ -32,11 +32,14 @@ public class StudentCsvChunkJobConfig {
 
     private final StudentCsvRequestDtoWriter studentCsvRequestDtoWriter;
     private final StudentCsvItemProcessor studentCsvItemProcessor;
+    private final SkipListener skipListener;
 
     public StudentCsvChunkJobConfig(StudentCsvRequestDtoWriter studentCsvRequestDtoWriter,
-                                    StudentCsvItemProcessor studentCsvItemProcessor) {
+                                    StudentCsvItemProcessor studentCsvItemProcessor,
+                                    SkipListener skipListener) {
         this.studentCsvRequestDtoWriter = studentCsvRequestDtoWriter;
         this.studentCsvItemProcessor = studentCsvItemProcessor;
+        this.skipListener = skipListener;
     }
 
     @Bean
@@ -55,9 +58,11 @@ public class StudentCsvChunkJobConfig {
 //                .writer(studentCsvRequestDtoWriter)
                 .writer(flatFileItemWriter(null))
                 .faultTolerant()
-                .skip(FlatFileParseException.class)
+                .skip(Throwable.class)
+//                .skip(FlatFileParseException.class)
 //                .skipLimit(Integer.MAX_VALUE)
                 .skipPolicy(new AlwaysSkipItemSkipPolicy())
+                .listener(skipListener)
                 .build();
     }
 
