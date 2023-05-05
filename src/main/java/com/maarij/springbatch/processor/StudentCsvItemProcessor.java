@@ -10,6 +10,10 @@ public class StudentCsvItemProcessor implements ItemProcessor<StudentCsvRequestD
     public StudentCsvRequestDto process(StudentCsvRequestDto item) {
         System.out.println(item.getId());
 
+        if (item.getId() == 6) {
+            throw new NullPointerException();
+        }
+
         return item;
     }
 }

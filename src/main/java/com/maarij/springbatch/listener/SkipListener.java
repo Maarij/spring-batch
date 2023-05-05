@@ -1,5 +1,7 @@
 package com.maarij.springbatch.listener;
 
+import com.maarij.springbatch.model.StudentCsvRequestDto;
+import org.springframework.batch.core.annotation.OnSkipInProcess;
 import org.springframework.batch.core.annotation.OnSkipInRead;
 import org.springframework.batch.item.file.FlatFileParseException;
 import org.springframework.stereotype.Component;
@@ -24,6 +26,14 @@ public class SkipListener {
             writer.write(data + "," + new Date() + "\n");
         } catch (Exception e) {
             throw new IllegalArgumentException(e);
+        }
+    }
+
+    @OnSkipInProcess
+    public void skipInProcess(StudentCsvRequestDto i, Throwable t) {
+        if (t instanceof NullPointerException) {
+            createFile("C:\\Git\\spring-batch\\exceptionFiles\\reader\\SkipInProcess.txt",
+                    i.toString());
         }
     }
 }
