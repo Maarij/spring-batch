@@ -62,7 +62,7 @@ public class StudentCsvChunkJobConfig {
                 .skipLimit(100)
 //                .skipPolicy(new AlwaysSkipItemSkipPolicy())
                 .listener(skipListener)
-                .retryLimit(1)
+                .retryLimit(1) // Retry only applies to processor and writer steps
                 .retry(Throwable.class)
                 .build();
     }
