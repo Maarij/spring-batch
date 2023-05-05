@@ -11,7 +11,6 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.skip.AlwaysSkipItemSkipPolicy;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
@@ -60,9 +59,11 @@ public class StudentCsvChunkJobConfig {
                 .faultTolerant()
                 .skip(Throwable.class)
 //                .skip(FlatFileParseException.class)
-//                .skipLimit(Integer.MAX_VALUE)
-                .skipPolicy(new AlwaysSkipItemSkipPolicy())
+                .skipLimit(100)
+//                .skipPolicy(new AlwaysSkipItemSkipPolicy())
                 .listener(skipListener)
+                .retryLimit(1)
+                .retry(Throwable.class)
                 .build();
     }
 
